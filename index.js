@@ -56,6 +56,44 @@ async function run() {
    })
 
 
+   app.patch("/updateemployee/:id",async(req,res)=>{
+
+
+    let updateUserData=req.body
+    
+
+    let idx=req.params.id
+
+    let query={_id:new ObjectId(idx)}
+    const updateDoc = {
+      $set: {
+        name: updateUserData.name,
+        email: updateUserData.email,
+        user_photo: updateUserData.user_photo,
+        job_title: updateUserData.job_title,
+        job_type: updateUserData.job_type,
+        salary: updateUserData.salary,
+        work_shift: updateUserData.work_shift
+      },
+    };
+
+    const result = await usersInfoCollection.updateOne(query, updateDoc);
+    res.send(result)
+
+
+
+   })
+
+   app.get("/employees/:id",async(req,res)=>{
+    let idx=req.params.id
+
+    let query={_id:new ObjectId(idx)}
+
+    let result=await usersInfoCollection.findOne(query)
+    res.send(result)
+  })
+
+
 
     app.get("/allemployee",async(req,res)=>{
 
