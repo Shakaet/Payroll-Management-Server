@@ -41,6 +41,7 @@ async function run() {
     const database = client.db("payrollDB");
     const userCollection = database.collection("users");
     const usersInfoCollection=database.collection("usersInfo")
+    const attendenceCollection=database.collection("attendence")
 
 
 
@@ -53,6 +54,54 @@ async function run() {
 
     const result = await usersInfoCollection.deleteOne(query);
     res.send(result)
+   })
+
+
+   app.get("/attendance/:employeeEmail", async (req, res) => {
+    let employeeEmail = req.params.employeeEmail;
+    let filter = { employeeEmail };
+
+    let result = await attendenceCollection.find(filter).sort({ date: -1 }).limit(1).toArray();
+
+    if (result.length > 0) {
+        res.send(result[0]); // Send only the latest attendance record
+    } else {
+        res.status(404).json({ message: "No attendance record found" });
+    }
+});
+
+
+
+  app.put("/attendance/:email",async(req,res)=>{
+
+    const { email } = req.params;
+    const updatedAttendance = await attendenceCollection.findOneAndUpdate(
+        { employeeEmail: email },
+        { $set: { status: "Present" } },
+        { new: true, upsert: true }
+    );
+
+    res.send(updatedAttendance)
+  })
+
+
+   app.post("/attendance",async(req,res)=>{
+
+    const { employeeEmail } = req.body;
+    const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+    const existingAttendance = await attendenceCollection.findOne({ employeeEmail, date: today });
+
+    if (existingAttendance) {
+      return res.status(400).json({ message: "Attendance already recorded for today" });
+  }
+
+  const attendance = { employeeEmail, date: today, status: "Absent" };
+  let result= await attendenceCollection.insertOne(attendance);
+
+  res.send(result)
+
+
    })
 
 
