@@ -56,6 +56,13 @@ async function run() {
     res.send(result)
    })
 
+   app.get("/allatendence",async(req,res)=>{
+
+    let result=await attendenceCollection.find().toArray()
+
+    res.send(result)
+   })
+
 
    app.get("/attendance/:employeeEmail", async (req, res) => {
     let employeeEmail = req.params.employeeEmail;
@@ -170,6 +177,43 @@ async function run() {
 
       res.send(result)
       
+
+    })
+
+    app.get("/users/employee/:email",async(req,res)=>{
+
+      let email=req.params.email
+
+     
+      let query={email}
+      let user= await userCollection.findOne(query)
+
+      let employee=false
+      if(user){
+        employee= user?.role === "employee"
+      }
+
+      res.send({ employee })
+
+
+    })
+
+
+    app.get("/users/admin/:email",async(req,res)=>{
+
+      let email=req.params.email
+
+     
+      let query={email}
+      let user= await userCollection.findOne(query)
+
+      let admin=false
+      if(user){
+        admin= user?.role === "admin"
+      }
+
+      res.send({ admin })
+
 
     })
 
