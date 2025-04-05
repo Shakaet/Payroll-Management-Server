@@ -68,13 +68,18 @@ async function run() {
     let employeeEmail = req.params.employeeEmail;
     let filter = { employeeEmail };
 
-    let result = await attendenceCollection.find(filter).sort({ date: -1 }).limit(1).toArray();
 
-    if (result.length > 0) {
-        res.send(result[0]); // Send only the latest attendance record
-    } else {
-        res.status(404).json({ message: "No attendance record found" });
-    }
+    let result=await attendenceCollection.find(filter).toArray()
+
+    res.send(result)
+
+    // let result = await attendenceCollection.find(filter).sort({ date: -1 }).limit(1).toArray();
+
+    // if (result.length > 0) {
+    //     res.send(result[0]); // Send only the latest attendance record
+    // } else {
+    //     res.status(404).json({ message: "No attendance record found" });
+    // }
 });
 
 
