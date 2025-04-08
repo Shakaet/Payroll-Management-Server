@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 require('dotenv').config();
 const cors = require('cors');
+const nodemailer = require("nodemailer");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 3000
 
@@ -42,6 +43,47 @@ async function run() {
     const userCollection = database.collection("users");
     const usersInfoCollection=database.collection("usersInfo")
     const attendenceCollection=database.collection("attendence")
+
+
+
+    app.post("/api/submitReport", async (req, res) => {
+      const { tasksCompleted, hoursWorked, issuesFaced, nextDayPlan, remarks } = req.body;
+      console.log(tasksCompleted)
+    
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+        
+    
+        // Mail content
+        const mailOptions = {
+          from: `"Daily Report Bot" <${process.env.EMAIL_USER}>`,
+          to: process.env.ADMIN_EMAIL,
+          subject: "New Daily Report Submitted",
+          html: `
+            <h2>📝 Daily Update Report</h2>
+            <p><strong>✅ Tasks Completed:</strong> ${tasksCompleted}</p>
+            <p><strong>⏱ Hours Worked:</strong> ${hoursWorked}</p>
+            <p><strong>⚠️ Issues Faced:</strong> ${issuesFaced}</p>
+            <p><strong>📅 Next Day Plan:</strong> ${nextDayPlan}</p>
+            <p><strong>🗒 Remarks:</strong> ${remarks}</p>
+          `,
+        };
+    
+        await transporter.sendMail(mailOptions);
+    
+        res.status(200).send({ message: "Report submitted and email sent to admin!" });
+      } catch (error) {
+        console.error("Email sending failed:", error);
+        res.status(500).send({ error: "Failed to send email" });
+      }
+    });
 
 
 
