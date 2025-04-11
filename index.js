@@ -43,6 +43,24 @@ async function run() {
     const userCollection = database.collection("users");
     const usersInfoCollection=database.collection("usersInfo")
     const attendenceCollection=database.collection("attendence")
+    const leaveCollection=database.collection("leaveReq")
+
+
+
+
+    app.post("/api/leave-request",async(req,res)=>{
+
+
+      let leaveReqData=req.body
+
+      // console.log(leaveReqData)
+
+      let result= await leaveCollection.insertOne(leaveReqData);
+
+      res.send(result)
+
+
+    })
 
 
 
