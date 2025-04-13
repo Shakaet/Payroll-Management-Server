@@ -55,6 +55,17 @@ async function run() {
 
       // console.log(leaveReqData)
 
+      let email=leaveReqData.email
+
+      let query={email}
+
+      let AllreadyUser=await leaveCollection.findOne(query)
+
+      if(AllreadyUser){
+
+        res.status(500).send({message: "You are already sent Request" })
+      }
+
       let result= await leaveCollection.insertOne(leaveReqData);
 
       res.send(result)
