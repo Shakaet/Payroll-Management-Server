@@ -48,6 +48,16 @@ async function run() {
 
 
 
+    app.get('/api/leave-request',async(req,res)=>{
+
+      let result=await leaveCollection.find().toArray()
+
+      res.send(result)
+    })
+
+
+
+
     app.post("/api/leave-request",async(req,res)=>{
 
 
