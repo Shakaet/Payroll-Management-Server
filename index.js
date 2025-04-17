@@ -56,10 +56,48 @@ async function run() {
     })
 
 
-    app.patch('/api/leave-request/:id',async(req,res)=>{
+    app.patch('/api/data/:id',async(req,res)=>{
 
-      console.log(data)
 
+      // let data=req.body
+
+
+      let idx=req.params.id
+
+      let query={_id:new ObjectId(idx)}
+
+      let {email}= req.query
+
+    
+
+      const filter = {email};
+      console.log(email)
+
+
+      const updateDoc = {
+        $set: {
+          status: "approved"
+        },
+      };
+      const options = { upsert: true };
+
+
+      await userCollection.deleteOne(filter);
+      await usersInfoCollection.deleteOne(filter);
+
+      const result = await leaveCollection.updateOne(query, updateDoc, options);
+
+      res.send(result)
+
+
+
+
+
+
+
+
+
+     
       
     })
 
