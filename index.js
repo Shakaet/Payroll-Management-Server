@@ -48,6 +48,17 @@ async function run() {
 
 
 
+
+    app.delete("/api/leave-request/:id",async(req,res)=>{
+
+
+      let idx=req.params.id
+      console.log(idx)
+    })
+
+
+
+
     app.get('/api/leave-request',async(req,res)=>{
 
       let result=await leaveCollection.find().toArray()
