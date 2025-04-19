@@ -53,7 +53,13 @@ async function run() {
 
 
       let idx=req.params.id
-      console.log(idx)
+      // console.log(idx)
+
+      const query = { _id:new ObjectId(idx) };
+      const result = await leaveCollection.deleteOne(query);
+      res.send(result)
+
+
     })
 
 
