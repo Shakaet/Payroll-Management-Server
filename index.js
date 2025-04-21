@@ -44,6 +44,17 @@ async function run() {
     const usersInfoCollection=database.collection("usersInfo")
     const attendenceCollection=database.collection("attendence")
     const leaveCollection=database.collection("leaveReq")
+    const taskDB=database.collection("taskdb")
+
+
+
+
+    app.post("/addtask",async(req,res)=>{
+
+      let formData=req.body
+
+      console.log(formData)
+    })
 
 
 
