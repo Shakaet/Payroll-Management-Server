@@ -47,13 +47,82 @@ async function run() {
     const taskDB=database.collection("taskdb")
 
 
+    app.delete("/alltask/:id",async(req,res)=>{
+
+      let idx=req.params.id
+
+    let query={_id:new ObjectId(idx)}
+
+    const result = await taskDB.deleteOne(query);
+    res.send(result)
+
+
+
+
+
+
+    })
+
+
+    app.get("/alltask",async(req,res)=>{
+
+       result= await taskDB.find().toArray()
+
+      res.send(result)
+
+
+    })
+
+
+
+    app.patch("/mytask/:id",async(req,res)=>{
+
+      let idx=req.params.id
+
+      let query={_id:new ObjectId(idx)}
+
+      let status=req.body.status
+      // console.log(status)
+
+      const updateDoc = {
+        $set: {
+          status: status
+        },
+      };
+      const options = { upsert: true };
+
+      const result = await taskDB.updateOne(query, updateDoc, options);
+
+      res.send(result)
+
+
+
+    })
+
+
+
+    app.get("/mytask/:email",async(req,res)=>{
+
+      let email=req.params.email
+
+      let query={email}
+
+      let result= await taskDB.find(query).toArray()
+
+      res.send(result)
+    })
+
+
 
 
     app.post("/addtask",async(req,res)=>{
 
       let formData=req.body
 
-      console.log(formData)
+      // console.log(formData)
+      let result= await taskDB.insertOne(formData)
+
+      res.send(result)
     })
 
 
