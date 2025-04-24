@@ -5,6 +5,7 @@ const cors = require('cors');
 const nodemailer = require("nodemailer");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 3000
+const stripe = require('stripe')(process.env.PAYMENT_KEY);
 
 
 app.use(express.json());
@@ -45,6 +46,65 @@ async function run() {
     const attendenceCollection=database.collection("attendence")
     const leaveCollection=database.collection("leaveReq")
     const taskDB=database.collection("taskdb")
+    const paymentsCollection = database.collection("payments");
+
+
+
+    app.post("/createPaymentIntent",async(req,res)=>{
+
+      let {price}=req.body
+      let amount=parseInt(price*100)
+      console.log(amount)
+      const paymentIntent = await stripe.paymentIntents.create({
+
+        amount:amount,
+        currency:"usd",
+        payment_method_types:["card"]
+        
+    })
+
+    res.send({
+      clientSecret:paymentIntent.client_secret
+    })
+  })
+
+
+  app.post("/payments",async(req,res)=>{
+
+    let paymentData=req.body
+    console.log(paymentData)
+
+
+    let intertedPayment=await paymentsCollection.insertOne(paymentData)
+
+
+
+    res.send({intertedPayment})
+
+  })
+
+
+
+
+
+    app.get("/adminCount",async(req,res)=>{
+
+      let query={role:"admin"}
+      let result=await userCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.get("/employeeCount",async(req,res)=>{
+
+      let query={role:"employee"}
+      let result=await userCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.get("/userCount",async(req,res)=>{
+
+      
+      let result=await userCollection.find().toArray()
+      res.send(result)
+    })
 
 
     app.delete("/alltask/:id",async(req,res)=>{
@@ -269,6 +329,17 @@ async function run() {
         res.status(500).send({ error: "Failed to send email" });
       }
     });
+
+
+    app.get("/allemployee/:id",async(req,res)=>{
+
+      let idx=req.params.id
+  
+      let query={_id:new ObjectId(idx)}
+  
+      const result = await usersInfoCollection.findOne(query);
+      res.send(result)
+     })
 
 
 
