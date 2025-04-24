@@ -83,6 +83,51 @@ async function run() {
 
   })
 
+  app.patch("/myPayment/:id",async(req,res)=>{
+
+
+    let idx=req.params.id
+
+
+    let query={_id:new ObjectId(idx)}
+
+    let status=req.body.status
+    console.log(status)
+
+    const updateDoc = {
+      $set: {
+        status: status
+      },
+    };
+    const options = { upsert: true };
+
+    const result = await paymentsCollection.updateOne(query, updateDoc, options);
+
+    res.send(result)
+
+
+
+  })
+
+  app.get("/mypaymentHistory/:email",async(req,res)=>{
+
+    let rec_email=req.params.email
+
+    let query={rec_email}
+
+
+    let result=await paymentsCollection.find(query).toArray()
+    res.send(result)
+  })
+
+
+  app.get("/allpaymentHistory",async(req,res)=>{
+
+
+    let result=await paymentsCollection.find().toArray()
+    res.send(result)
+  })
+
 
 
 
