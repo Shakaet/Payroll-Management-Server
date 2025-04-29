@@ -8,8 +8,18 @@ const port = process.env.PORT || 3000
 const stripe = require('stripe')(process.env.PAYMENT_KEY);
 
 
+
+
+
 app.use(express.json());
 app.use(cors());
+
+
+ 
+  // console.log(process.env.Sending_API_Key)
+
+
+
 
 
 
@@ -32,6 +42,10 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
+
+
+
 
 async function run() {
   try {
@@ -69,19 +83,96 @@ async function run() {
   })
 
 
-  app.post("/payments",async(req,res)=>{
+  // app.post("/payments",async(req,res)=>{
 
-    let paymentData=req.body
-    console.log(paymentData)
-
-
-    let intertedPayment=await paymentsCollection.insertOne(paymentData)
+  //   let paymentData=req.body
+  //   console.log(paymentData)
 
 
+  //   let intertedPayment=await paymentsCollection.insertOne(paymentData)
 
-    res.send({intertedPayment})
+  //   try {
+  //     const transporter = nodemailer.createTransport({
+  //       host: process.env.EMAIL_HOST,
+  //       port: process.env.EMAIL_PORT,
+  //       auth: {
+  //         user: process.env.EMAIL_USER,
+  //         pass: process.env.EMAIL_PASS,
+  //       },
+  //     });
+      
+  
+  //     // Mail content
+  //     const mailOptions = {
+  //       from: `"Salary Sent" <${process.env.EMAIL_USER}>`,
+  //       to: process.env.ADMIN_EMAIL,
+  //       subject: "Employees Salary sent Successfully",
+  //       html: `
+  //         <h2>📝Employees Salary Pay Report</h2>
+  //         <p><strong>✅ Tasks Completed:</strong> transection id ${paymentData.transectionId}</p>
+          
+  //       `,
+  //     };
+  
+  //     await transporter.sendMail(mailOptions);
+  
+  //     res.status(200).send({ message: "Report submitted and email sent to admin!" });
+  //   } catch (error) {
+  //     console.error("Email sending failed:", error);
+  //     res.status(500).send({ error: "Failed to send email" });
+  //   }
 
-  })
+
+   
+    
+
+ 
+  
+      
+
+
+
+  //   res.send({intertedPayment})
+
+  // })
+
+  app.post("/payments", async (req, res) => {
+    let paymentData = req.body;
+    console.log(paymentData);
+  
+    try {
+      let intertedPayment = await paymentsCollection.insertOne(paymentData);
+  
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+  
+      const mailOptions = {
+        from: `"Salary Sent" <${process.env.EMAIL_USER}>`,
+        to: process.env.ADMIN_EMAIL,
+        subject: "Employees Salary sent Successfully",
+        html: `
+          <h2>📝Employees Salary Pay Report</h2>
+          <p><strong>✅ Tasks Completed:</strong> transection id ${paymentData.transectionId}</p>
+        `,
+      };
+  
+      await transporter.sendMail(mailOptions);
+  
+      res.status(200).send({
+        message: "Report submitted and email sent to admin!",
+        intertedPayment,
+      });
+    } catch (error) {
+      console.error("Email sending failed:", error);
+      res.status(500).send({ error: "Failed to send email" });
+    }
+  });
 
   app.patch("/myPayment/:id",async(req,res)=>{
 
