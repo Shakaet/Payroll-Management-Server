@@ -38,6 +38,33 @@ app.use(express.json());
 // payroll
 // jtNyh3mXohIlorwR
 
+let varifyToken=(req,res,next)=>{
+  // console.log("middleware running")
+
+  let token =req.cookies?.token
+  // console.log(token)
+  console.log(token)
+
+
+
+  
+
+  if(!token){
+    return res.status(401).send({message:"unauthorized token"})
+  }
+
+
+  jwt.verify(token, process.env.JWT_Secret,(err, decoded)=>{
+
+    if(err){
+      return res.status(401).send({message:"unauthorized token"})
+    }
+
+    req.user=decoded
+    next()
+  });
+}
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -255,7 +282,7 @@ async function run() {
   })
 
 
-  app.get("/allpaymentHistory",async(req,res)=>{
+  app.get("/allpaymentHistory",varifyToken,async(req,res)=>{
 
 
     let result=await paymentsCollection.find().toArray()
