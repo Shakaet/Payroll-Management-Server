@@ -470,7 +470,7 @@ async function run() {
 
 
 
-    app.post("/api/leave-request",async(req,res)=>{
+    app.post("/api/leave-request",varifyToken,async(req,res)=>{
 
 
       let leaveReqData=req.body
@@ -601,7 +601,7 @@ async function run() {
   })
 
 
-   app.post("/attendance",async(req,res)=>{
+   app.post("/attendance",varifyToken,async(req,res)=>{
 
     const { employeeEmail } = req.body;
     const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
@@ -660,7 +660,7 @@ async function run() {
 
 
 
-    app.get("/allemployee",async(req,res)=>{
+    app.get("/allemployee",varifyToken,async(req,res)=>{
 
       let result=await usersInfoCollection.find().toArray()
       res.send(result)
