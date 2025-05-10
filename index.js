@@ -11,7 +11,7 @@ const stripe = require('stripe')(process.env.PAYMENT_KEY);
 
 
 app.use(cors({
-  origin:["http://localhost:5173"],
+  origin:["http://localhost:5173","http://localhost:5174"],
   credentials:true
 }))
 
@@ -134,7 +134,7 @@ async function run() {
 
 
 
-    app.post("/createPaymentIntent",async(req,res)=>{
+    app.post("/createPaymentIntent",varifyToken,async(req,res)=>{
 
       let {price}=req.body
       let amount=parseInt(price*100)
@@ -206,7 +206,7 @@ async function run() {
 
   // })
 
-  app.post("/payments", async (req, res) => {
+  app.post("/payments",varifyToken, async (req, res) => {
     let paymentData = req.body;
     console.log(paymentData);
   
@@ -537,7 +537,7 @@ async function run() {
     });
 
 
-    app.get("/allemployee/:id",async(req,res)=>{
+    app.get("/allemployee/:id",varifyToken,async(req,res)=>{
 
       let idx=req.params.id
   
