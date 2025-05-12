@@ -153,6 +153,15 @@ async function run() {
   })
 
 
+
+
+  app.get("/paymentDetails",async(req,res)=>{
+
+    let result=await paymentsCollection.find().toArray()
+    res.send(result)
+  })
+
+
   // app.post("/payments",async(req,res)=>{
 
   //   let paymentData=req.body
