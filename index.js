@@ -100,6 +100,7 @@ async function run() {
     const leaveCollection=database.collection("leaveReq")
     const taskDB=database.collection("taskdb")
     const paymentsCollection = database.collection("payments");
+    const reviewCollection = database.collection("reviews");
 
 
     app.post("/jwt",async(req,res)=>{
@@ -385,6 +386,28 @@ async function run() {
       let result= await taskDB.find(query).toArray()
 
       res.send(result)
+    })
+
+
+    app.get("/api/review",async(req,res)=>{
+
+     let result=await reviewCollection.find().toArray()
+     res.send(result)
+    })
+
+
+    app.post("/api/reviews",async(req,res)=>{
+
+
+      let formData=req.body
+
+      // console.log(formData)
+      let result= await reviewCollection.insertOne(formData)
+
+      res.send(result)
+
+
+
     })
 
 
