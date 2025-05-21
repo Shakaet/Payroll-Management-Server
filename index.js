@@ -702,6 +702,7 @@ async function run() {
     app.post("/addemployees",async(req,res)=>{
 
       let userData=req.body
+      console.log(userData)
 
       let email=userData?.email
 
