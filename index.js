@@ -401,7 +401,7 @@ async function run() {
 
       let formData=req.body
 
-      // console.log(formData)
+      //  console.log(formData)
       let result= await reviewCollection.insertOne(formData)
 
       res.send(result)
@@ -502,30 +502,51 @@ async function run() {
 
 
 
-    app.post("/api/leave-request",varifyToken,async(req,res)=>{
+    // app.post("/api/leave-request",varifyToken,async(req,res)=>{
 
 
-      let leaveReqData=req.body
+    //   let leaveReqData=req.body
 
-      // console.log(leaveReqData)
+    //   // console.log(leaveReqData)
 
-      let email=leaveReqData.email
+    //   let email=leaveReqData.email
 
-      let query={email}
+    //   let query={email}
 
-      let AllreadyUser=await leaveCollection.findOne(query)
+    //   let AllreadyUser=await leaveCollection.findOne(query)
 
-      if(AllreadyUser){
+    //   if(AllreadyUser){
 
-        res.status(500).send({message: "You are already sent Request" })
-      }
+    //     res.status(500).send({message: "You are already sent Request" })
+    //   }
 
-      let result= await leaveCollection.insertOne(leaveReqData);
+    //   let result= await leaveCollection.insertOne(leaveReqData);
 
-      res.send(result)
+    //   res.send(result)
 
 
-    })
+    // })
+    app.post("/api/leave-request", varifyToken, async (req, res) => {
+  try {
+    const leaveReqData = req.body;
+    const email = leaveReqData.email;
+    const query = { email };
+
+    const AllreadyUser = await leaveCollection.findOne(query);
+
+    if (AllreadyUser) {
+      return res.status(400).json({ message: "You have already sent a request" }); // ✅ use return
+    }
+
+    const result = await leaveCollection.insertOne(leaveReqData);
+
+    return res.status(200).json({ message: "Request sent successfully", result }); // ✅ return response
+  } catch (error) {
+    console.error("Leave request error:", error.message);
+    return res.status(500).json({ message: "Something went wrong on the server" });
+  }
+});
+
 
 
 
