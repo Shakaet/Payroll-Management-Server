@@ -11,7 +11,7 @@ const stripe = require('stripe')(process.env.PAYMENT_KEY);
 
 
 app.use(cors({
-  origin:["http://localhost:5173","http://localhost:5174"],
+  origin:["https://gilded-centaur-ce11bb.netlify.app","http://localhost:5173"],
   credentials:true
 }))
 
@@ -43,7 +43,7 @@ let varifyToken=(req,res,next)=>{
 
   let token =req.cookies?.token
   // console.log(token)
-  console.log(token)
+  // console.log(token)
 
 
 
@@ -113,9 +113,9 @@ async function run() {
       res
       .cookie('token', token, {
         httpOnly: true, 
-        secure:false  ,    // Prevent JavaScript access to the cookie
-        // secure: process.env.NODE_ENV === "production",
-        // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",         // Send cookie over HTTPS only
+        // secure:false  ,    // Prevent JavaScript access to the cookie
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",         // Send cookie over HTTPS only
         
     })
       .send({success:true})
@@ -126,9 +126,9 @@ async function run() {
       res
       .clearCookie('token',  {
         httpOnly: true,
-        secure:false,
-        // secure: process.env.NODE_ENV === "production",
-        // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Use true in production with HTTPS
+        // secure:false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // Use true in production with HTTPS
       })
       .send({success:true})
     })
@@ -218,7 +218,7 @@ async function run() {
 
   app.post("/payments",varifyToken, async (req, res) => {
     let paymentData = req.body;
-    console.log(paymentData);
+    // console.log(paymentData);
   
     try {
       let intertedPayment = await paymentsCollection.insertOne(paymentData);
@@ -263,7 +263,7 @@ async function run() {
     let query={_id:new ObjectId(idx)}
 
     let status=req.body.status
-    console.log(status)
+    // console.log(status)
 
     const updateDoc = {
       $set: {
@@ -466,7 +466,7 @@ async function run() {
     
 
       const filter = {email};
-      console.log(email)
+      // console.log(email)
 
 
       const updateDoc = {
@@ -552,7 +552,7 @@ async function run() {
 
     app.post("/api/submitReport", async (req, res) => {
       const { tasksCompleted, hoursWorked, issuesFaced, nextDayPlan, remarks } = req.body;
-      console.log(tasksCompleted)
+      // console.log(tasksCompleted)
     
       try {
         const transporter = nodemailer.createTransport({
